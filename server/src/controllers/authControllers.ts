@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 
 import { createUser } from "../services/authServices";
 import { signToken } from "../utils/jwt";
+import logger from "../config/logger";
 
 interface RegisterBody {
   email: string;
@@ -45,6 +46,7 @@ export async function register(
       data: newUser,
     });
   } catch (error) {
+    logger.error("Failed to register", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 }

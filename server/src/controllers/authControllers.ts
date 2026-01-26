@@ -1,9 +1,12 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
 import { createUser } from "../services/authServices";
 import { signToken } from "../utils/jwt";
-import logger from "../config/logger";
+
+import { registerUserSchema } from "./../validations/userValidation";
+import { userResponseSchema } from "../validations/user.response.schema";
+import logger from "./../config/logger";
 
 interface RegisterBody {
   email: string;
@@ -14,9 +17,15 @@ interface RegisterBody {
 export async function register(
   req: Request<{}, {}, RegisterBody>,
   res: Response,
+  next: NextFunction,
 ): Promise<void> {
   try {
-    const { email, name, password } = req.body;
+    logger.info("Register attempt", {
+      email: req.body.email,
+      ip: req.ip,
+    });
+
+    const { email, name, password } = registerUserSchema.parse(req.body);
 
     if (
       typeof email !== "string" ||
@@ -31,7 +40,14 @@ export async function register(
 
     const newUser = await createUser(email, name, hashedPassword);
 
+    logger.info("User registered successfully", {
+      userId: newUser.id,
+      email: newUser.email,
+    });
+
     const token = signToken({ userId: newUser.id });
+
+    const response = userResponseSchema.parse(newUser);
 
     res.cookie("access_token", token, {
       httpOnly: true,
@@ -43,10 +59,9 @@ export async function register(
     res.status(201).json({
       success: true,
       message: "User successfully created",
-      data: newUser,
+      data: response,
     });
   } catch (error) {
-    logger.error("Failed to register", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    next(error);
   }
 }

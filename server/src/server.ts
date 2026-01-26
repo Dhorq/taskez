@@ -4,9 +4,11 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 
 import authRoutes from "./routes/authRoutes.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
 
+app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
 dotenv.config();
@@ -18,6 +20,8 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoutes);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server listening to ${PORT}`);

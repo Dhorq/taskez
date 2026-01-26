@@ -4,6 +4,13 @@ node_modules
 
 /generated/prisma
 
+prisma/schema.prisma
+prisma/migrations/**
+migration.sql
+
+server/generated/prisma/
+
+
 # OTHERS
 
 ############################

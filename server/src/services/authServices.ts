@@ -10,3 +10,9 @@ export const createUser = async (
     select: { id: true, email: true, name: true, createdAt: true },
   });
 };
+
+export const findUserByEmail = async (email: string) => {
+  return prisma.user.findUnique({
+    where: { email },
+  });
+};

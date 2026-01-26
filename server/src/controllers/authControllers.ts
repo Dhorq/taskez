@@ -141,3 +141,29 @@ export async function login(
     next(error);
   }
 }
+
+export async function logout(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      sameSite: "strict",
+    });
+
+    logger.info("User logged out successfully", {
+      userId: req.user.id,
+    });
+
+    res.json({ message: "Logout successful" });
+  } catch (error) {
+    next(error);
+  }
+}

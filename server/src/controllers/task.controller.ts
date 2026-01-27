@@ -2,8 +2,18 @@ import { NextFunction, Request, Response } from "express";
 import { createTaskSchema } from "../validations/taskValidation";
 import { taskResponseSchema } from "../validations/task.response.schema";
 import { prisma } from "../../lib/prisma";
+import logger from "../config/logger";
 
 interface createTaskBody {
+  title: string;
+  content: string;
+}
+
+type Params = {
+  id: string;
+};
+
+interface updateTaskBody {
   title: string;
   content: string;
 }
@@ -27,6 +37,12 @@ export async function createTask(
       data: { authorId: userId, title, content },
     });
 
+    logger.info("Task updated successfully", {
+      userId: newTask.id,
+      title: newTask.title,
+      content: newTask.content,
+    });
+
     const response = taskResponseSchema.parse(newTask);
 
     res.status(201).json({
@@ -34,6 +50,70 @@ export async function createTask(
       message: "Task successfully created",
       data: response,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateTask(
+  req: Request<Params, {}, updateTaskBody>,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const { title, content } = createTaskSchema.parse(req.body);
+
+    if (!req.user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const userId = req.user.id;
+
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+      res.status(400).json({ message: "Invalid ID" });
+      return;
+    }
+
+    const task = await prisma.task.findFirst({
+      where: { id, authorId: userId },
+    });
+
+    if (!task) {
+      res.status(404).json({ message: "Task not found" });
+      return;
+    }
+
+    const updatedTask = await prisma.task.update({
+      where: { id },
+      data: { authorId: userId, title, content },
+    });
+
+    logger.info("Task updated successfully", {
+      taskId: updatedTask.id,
+      userId,
+    });
+
+    const response = taskResponseSchema.parse(updatedTask);
+
+    res.status(200).json({
+      success: true,
+      message: "Task successfully updated",
+      data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteTask(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
   } catch (error) {
     next(error);
   }

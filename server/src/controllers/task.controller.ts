@@ -28,7 +28,7 @@ export async function getTasks(
   req: Request,
   res: Response,
   next: NextFunction,
-) {
+): Promise<void> {
   try {
     logger.info("Get tasks attempt", {
       ip: req.ip,
@@ -51,6 +51,44 @@ export async function getTasks(
     });
 
     const response = taskListResponseSchema.parse(tasks);
+
+    res.status(200).json({
+      success: true,
+      message: "Task successfully fetched",
+      data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getTask(
+  req: Request<Params>,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    logger.info("Get task attempt", {
+      ip: req.ip,
+    });
+
+    const id = Number(req.params.id);
+
+    const task = await prisma.task.findUnique({
+      where: { id },
+    });
+
+    if (!task) {
+      res.status(404).json({ message: "Task not found" });
+      return;
+    }
+
+    logger.info("Task updated successfully", {
+      userId: id,
+      task,
+    });
+
+    const response = taskResponseSchema.parse(task);
 
     res.status(200).json({
       success: true,

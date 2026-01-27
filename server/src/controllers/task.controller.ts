@@ -1,5 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { createTaskSchema } from "../validations/taskValidation";
+import {
+  createTaskSchema,
+  updateTaskSchema,
+} from "../validations/taskValidation";
 import { taskResponseSchema } from "../validations/task.response.schema";
 import { prisma } from "../../lib/prisma";
 import logger from "../config/logger";
@@ -24,6 +27,11 @@ export async function createTask(
   next: NextFunction,
 ): Promise<void> {
   try {
+    logger.info("Create task attempt", {
+      title: req.body.title,
+      ip: req.ip,
+    });
+
     const { title, content } = createTaskSchema.parse(req.body);
 
     if (!req.user) {
@@ -61,7 +69,12 @@ export async function updateTask(
   next: NextFunction,
 ): Promise<void> {
   try {
-    const { title, content } = createTaskSchema.parse(req.body);
+    logger.info("Update task attempt", {
+      title: req.body.title,
+      ip: req.ip,
+    });
+
+    const { title, content } = updateTaskSchema.parse(req.body);
 
     if (!req.user) {
       res.status(401).json({ message: "Unauthorized" });
@@ -93,7 +106,7 @@ export async function updateTask(
 
     logger.info("Task updated successfully", {
       taskId: updatedTask.id,
-      userId,
+      id,
     });
 
     const response = taskResponseSchema.parse(updatedTask);
@@ -109,11 +122,31 @@ export async function updateTask(
 }
 
 export async function deleteTask(
-  req: Request,
+  req: Request<Params>,
   res: Response,
   next: NextFunction,
 ) {
   try {
+    logger.info("Delete task attempt", {
+      ip: req.ip,
+    });
+
+    const id = Number(req.params.id);
+
+    const deletedTask = await prisma.task.delete({ where: { id } });
+
+    logger.info("Task deleted successfully", {
+      taskId: deletedTask.id,
+      id,
+    });
+
+    const response = taskResponseSchema.parse(deletedTask);
+
+    res.status(200).json({
+      success: true,
+      message: "Task successfully deleted",
+      data: response,
+    });
   } catch (error) {
     next(error);
   }

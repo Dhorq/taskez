@@ -3,7 +3,10 @@ import {
   createTaskSchema,
   updateTaskSchema,
 } from "../validations/taskValidation";
-import { taskResponseSchema } from "../validations/task.response.schema";
+import {
+  taskListResponseSchema,
+  taskResponseSchema,
+} from "../validations/task.response.schema";
 import { prisma } from "../../lib/prisma";
 import logger from "../config/logger";
 
@@ -19,6 +22,44 @@ type Params = {
 interface updateTaskBody {
   title: string;
   content: string;
+}
+
+export async function getTasks(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  try {
+    logger.info("Get tasks attempt", {
+      ip: req.ip,
+    });
+
+    if (!req.user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const userId = req.user.id;
+
+    const tasks = await prisma.task.findMany({
+      where: { authorId: userId },
+    });
+
+    logger.info("Task fetched successfully", {
+      userId: req.user.id,
+      tasks,
+    });
+
+    const response = taskListResponseSchema.parse(tasks);
+
+    res.status(200).json({
+      success: true,
+      message: "Task successfully fetched",
+      data: response,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 export async function createTask(

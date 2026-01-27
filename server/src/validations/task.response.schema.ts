@@ -7,3 +7,5 @@ export const taskResponseSchema = z.object({
   published: z.boolean(),
   authorId: z.number().int(),
 });
+
+export const taskListResponseSchema = z.array(taskResponseSchema);

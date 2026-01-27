@@ -8,13 +8,14 @@ import {
   updateTask,
 } from "../controllers/task.controller";
 import { authMiddleware } from "../utils/jwt";
+import { authorizeTaskOwner } from "../middlewares/authorizeTaskOwner";
 
 const router = express.Router();
 
 router.get("/", authMiddleware, getTasks);
-router.get("/:id", authMiddleware, getTask);
+router.get("/:id", authMiddleware, authorizeTaskOwner, getTask);
 router.post("/create", authMiddleware, createTask);
-router.post("/update/:id", authMiddleware, updateTask);
-router.post("/delete/:id", authMiddleware, deleteTask);
+router.post("/update/:id", authMiddleware, authorizeTaskOwner, updateTask);
+router.post("/delete/:id", authMiddleware, authorizeTaskOwner, deleteTask);
 
 export default router;

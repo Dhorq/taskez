@@ -5,7 +5,7 @@ import ReviewTasks from "./../components/ReviewTasks";
 
 const Home = () => {
   return (
-    <div className="grid grid-cols-4 gap-10 max-h-screen">
+    <div className="grid grid-cols-4 gap-10">
       <NewTasks />
       <ReviewTasks />
       <Delivery />

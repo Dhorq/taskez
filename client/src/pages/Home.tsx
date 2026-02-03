@@ -131,16 +131,26 @@ const Home = () => {
             columnId="new"
             onAddClick={handleAddTask}
           />
-          <ReviewTasks tasks={columns.review} columnId="review" />
-          <Delivery tasks={columns.delivery} columnId="delivery" />
-          <CompletedTasks tasks={columns.completed} columnId="completed" />
+          <ReviewTasks
+            tasks={columns.review}
+            columnId="review"
+            onAddClick={handleAddTask}
+          />
+          <Delivery
+            tasks={columns.delivery}
+            columnId="delivery"
+            onAddClick={handleAddTask}
+          />
+          <CompletedTasks
+            tasks={columns.completed}
+            columnId="completed"
+            onAddClick={handleAddTask}
+          />
         </div>
 
         <DragOverlay>
           {activeTask ? (
-            <div className="bg-white/80 text-white p-3 h-50 rounded-lg shadow-2xl scale-105 cursor-grabbing select-none">
-              {activeTask.title}
-            </div>
+            <div className="bg-white/80 text-white p-3 h-50 rounded-lg shadow-2xl scale-105 cursor-grabbing select-none"></div>
           ) : null}
         </DragOverlay>
       </DndContext>

@@ -28,7 +28,6 @@ const Task = ({ id, title, description, priority, columnId }: Props) => {
     opacity: isDragging ? 0.25 : 1,
   };
 
-  /* 🔥 warna priority */
   const priorityColor = {
     low: "bg-green-500/20 text-green-400 border-green-400/30",
     medium: "bg-yellow-500/20 text-yellow-400 border-yellow-400/30",

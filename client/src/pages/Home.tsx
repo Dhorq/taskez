@@ -15,6 +15,7 @@ import CompletedTasks from "../components/CompletedTasks";
 import Delivery from "../components/Delivery";
 import NewTasks from "../components/NewTasks";
 import ReviewTasks from "../components/ReviewTasks";
+import AddTask from "../components/AddTask";
 
 type Task = {
   id: string;
@@ -25,6 +26,25 @@ type ColumnId = "new" | "review" | "delivery" | "completed";
 type Columns = Record<ColumnId, Task[]>;
 
 const Home = () => {
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleAddTask = () => {
+    setOpenModal(true);
+  };
+
+  const handleSubmitTask = (title: string) => {
+    setColumns((prev) => ({
+      ...prev,
+      new: [
+        ...prev.new,
+        {
+          id: crypto.randomUUID(),
+          title,
+        },
+      ],
+    }));
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -98,27 +118,39 @@ const Home = () => {
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="grid grid-cols-4 gap-10">
-        <NewTasks tasks={columns.new} columnId="new" />
-        <ReviewTasks tasks={columns.review} columnId="review" />
-        <Delivery tasks={columns.delivery} columnId="delivery" />
-        <CompletedTasks tasks={columns.completed} columnId="completed" />
-      </div>
+    <>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="grid grid-cols-4 gap-10">
+          <NewTasks
+            tasks={columns.new}
+            columnId="new"
+            onAddClick={handleAddTask}
+          />
+          <ReviewTasks tasks={columns.review} columnId="review" />
+          <Delivery tasks={columns.delivery} columnId="delivery" />
+          <CompletedTasks tasks={columns.completed} columnId="completed" />
+        </div>
 
-      <DragOverlay>
-        {activeTask ? (
-          <div className="bg-white/80 text-white p-3 h-40 rounded-lg shadow-2xl scale-105 cursor-grabbing select-none">
-            {activeTask.title}
-          </div>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+        <DragOverlay>
+          {activeTask ? (
+            <div className="bg-white/80 text-white p-3 h-50 rounded-lg shadow-2xl scale-105 cursor-grabbing select-none">
+              {activeTask.title}
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+
+      <AddTask
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onAdd={handleSubmitTask}
+      />
+    </>
   );
 };
 

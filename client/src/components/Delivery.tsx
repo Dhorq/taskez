@@ -38,6 +38,8 @@ const Delivery = ({ tasks, columnId }: Props) => {
             id={task.id}
             title={task.title}
             columnId={columnId}
+            priority={"low"}
+            description={"Test"}
           />
         ))}
       </SortableContext>

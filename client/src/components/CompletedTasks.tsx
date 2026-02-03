@@ -1,13 +1,48 @@
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core";
 import Task from "./Task";
 
-const CompletedTasks = () => {
+type TaskType = {
+  id: string;
+  title: string;
+};
+
+type Props = {
+  tasks: TaskType[];
+  columnId: string;
+};
+
+const CompletedTasks = ({ tasks, columnId }: Props) => {
+  const { setNodeRef } = useDroppable({
+    id: columnId,
+    data: { columnId },
+  });
+
   return (
-    <div className="bg-white/85 shadow-xl h-[83vh] rounded-lg justify-start text-center p-3 flex flex-col gap-2">
-      <div className="flex justify-between w-full px-2 font-bold text-black">
-        <p className="underline">New Tasks</p>
-        <p>+</p>
-      </div>
-      <Task />
+    <div
+      ref={setNodeRef}
+      className="bg-white/5 shadow-xl rounded-sm h-[83vh] p-3 flex flex-col gap-2 overflow-y-auto overflow-x-hidden"
+    >
+      <p className="font-bold text-2xl text-shadow-2xs text-white">
+        Completed Tasks
+      </p>
+
+      <SortableContext
+        items={tasks.map((t) => t.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        {tasks.map((task) => (
+          <Task
+            key={task.id}
+            id={task.id}
+            title={task.title}
+            columnId={columnId}
+          />
+        ))}
+      </SortableContext>
     </div>
   );
 };

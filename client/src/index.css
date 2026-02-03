@@ -1,4 +1,9 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 @import "tailwindcss";
+
+* {
+  font-family: "Poppins", sans-serif;
+}
 
 @layer utilities {
   .scrollbar-hidden::-webkit-scrollbar {

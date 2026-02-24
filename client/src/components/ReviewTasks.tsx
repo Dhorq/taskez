@@ -30,7 +30,7 @@ const ReviewTasks = ({ tasks, columnId, onAddClick, onEdit, onDelete }: Props) =
   return (
     <div
       ref={setNodeRef}
-      className="bg-white/5 shadow-xl rounded-lg h-[83vh] p-3 flex flex-col gap-2 overflow-y-auto"
+      className="bg-white/5 shadow-xl rounded-lg h-[83vh] p-3 flex flex-col gap-2 overflow-y-auto overflow-x-hidden scrollbar-thin"
     >
       <div className="items-center flex justify-between">
         <div className="flex items-center gap-3">

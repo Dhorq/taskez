@@ -24,10 +24,12 @@ model User {
 }
 
 model Task {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  priority    String  @default("low")
+  status      String  @default("new")
+  published   Boolean @default(false)
+  author      User    @relation(fields: [authorId], references: [id])
+  authorId    Int
 }

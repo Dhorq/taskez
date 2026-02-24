@@ -10,7 +10,6 @@ export const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  // ZOD ERROR
   if (err instanceof ZodError) {
     logger.warn("Validation error", {
       path: req.path,
@@ -23,7 +22,6 @@ export const errorHandler = (
     });
   }
 
-  // NORMAL ERROR
   if (err instanceof Error) {
     logger.error("Unexpected error", {
       path: req.path,
@@ -36,7 +34,6 @@ export const errorHandler = (
     });
   }
 
-  // UNKNOWN
   logger.error("Unknown error", {
     path: req.path,
     error: err,

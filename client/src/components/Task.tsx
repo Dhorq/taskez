@@ -1,5 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Pencil, Trash2 } from "lucide-react";
 
 type Props = {
   id: string;
@@ -7,9 +8,11 @@ type Props = {
   description: string;
   priority: "low" | "medium" | "high";
   columnId: string;
+  onEdit: () => void;
+  onDelete: () => void;
 };
 
-const Task = ({ id, title, description, priority, columnId }: Props) => {
+const Task = ({ id, title, description, priority, columnId, onEdit, onDelete }: Props) => {
   const {
     setNodeRef,
     attributes,
@@ -40,9 +43,8 @@ const Task = ({ id, title, description, priority, columnId }: Props) => {
       style={style}
       {...attributes}
       {...listeners}
-      onClick={(e) => e.stopPropagation()}
       className="
-        w-full h-50
+        w-full min-h-28
         bg-white/10 backdrop-blur-md
         border border-white/10
         rounded-xl p-4
@@ -52,9 +54,10 @@ const Task = ({ id, title, description, priority, columnId }: Props) => {
         hover:-translate-y-0.5
         transition-all duration-300
         flex flex-col gap-2
+        group
       "
     >
-      <div className="flex justify-start">
+      <div className="flex justify-between items-center">
         <span
           className={`
             text-xs font-semibold px-2 py-1 rounded-md border
@@ -63,6 +66,29 @@ const Task = ({ id, title, description, priority, columnId }: Props) => {
         >
           {priority.toUpperCase()}
         </span>
+
+        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            className="p-1.5 rounded-md bg-white/10 hover:bg-blue-500/30 text-gray-300 hover:text-blue-300 transition-colors"
+          >
+            <Pencil className="size-3.5" />
+          </button>
+          <button
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            className="p-1.5 rounded-md bg-white/10 hover:bg-red-500/30 text-gray-300 hover:text-red-400 transition-colors"
+          >
+            <Trash2 className="size-3.5" />
+          </button>
+        </div>
       </div>
 
       <h3 className="font-semibold text-white text-md leading-snug">{title}</h3>

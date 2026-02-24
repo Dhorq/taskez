@@ -39,7 +39,9 @@ export type TaskSumAggregateOutputType = {
 export type TaskMinAggregateOutputType = {
   id: number | null
   title: string | null
-  content: string | null
+  description: string | null
+  priority: string | null
+  status: string | null
   published: boolean | null
   authorId: number | null
 }
@@ -47,7 +49,9 @@ export type TaskMinAggregateOutputType = {
 export type TaskMaxAggregateOutputType = {
   id: number | null
   title: string | null
-  content: string | null
+  description: string | null
+  priority: string | null
+  status: string | null
   published: boolean | null
   authorId: number | null
 }
@@ -55,7 +59,9 @@ export type TaskMaxAggregateOutputType = {
 export type TaskCountAggregateOutputType = {
   id: number
   title: number
-  content: number
+  description: number
+  priority: number
+  status: number
   published: number
   authorId: number
   _all: number
@@ -75,7 +81,9 @@ export type TaskSumAggregateInputType = {
 export type TaskMinAggregateInputType = {
   id?: true
   title?: true
-  content?: true
+  description?: true
+  priority?: true
+  status?: true
   published?: true
   authorId?: true
 }
@@ -83,7 +91,9 @@ export type TaskMinAggregateInputType = {
 export type TaskMaxAggregateInputType = {
   id?: true
   title?: true
-  content?: true
+  description?: true
+  priority?: true
+  status?: true
   published?: true
   authorId?: true
 }
@@ -91,7 +101,9 @@ export type TaskMaxAggregateInputType = {
 export type TaskCountAggregateInputType = {
   id?: true
   title?: true
-  content?: true
+  description?: true
+  priority?: true
+  status?: true
   published?: true
   authorId?: true
   _all?: true
@@ -186,7 +198,9 @@ export type TaskGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type TaskGroupByOutputType = {
   id: number
   title: string
-  content: string | null
+  description: string | null
+  priority: string
+  status: string
   published: boolean
   authorId: number
   _count: TaskCountAggregateOutputType | null
@@ -217,7 +231,9 @@ export type TaskWhereInput = {
   NOT?: Prisma.TaskWhereInput | Prisma.TaskWhereInput[]
   id?: Prisma.IntFilter<"Task"> | number
   title?: Prisma.StringFilter<"Task"> | string
-  content?: Prisma.StringNullableFilter<"Task"> | string | null
+  description?: Prisma.StringNullableFilter<"Task"> | string | null
+  priority?: Prisma.StringFilter<"Task"> | string
+  status?: Prisma.StringFilter<"Task"> | string
   published?: Prisma.BoolFilter<"Task"> | boolean
   authorId?: Prisma.IntFilter<"Task"> | number
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -226,7 +242,9 @@ export type TaskWhereInput = {
 export type TaskOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  content?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  priority?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   published?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   author?: Prisma.UserOrderByWithRelationInput
@@ -238,7 +256,9 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.TaskWhereInput[]
   NOT?: Prisma.TaskWhereInput | Prisma.TaskWhereInput[]
   title?: Prisma.StringFilter<"Task"> | string
-  content?: Prisma.StringNullableFilter<"Task"> | string | null
+  description?: Prisma.StringNullableFilter<"Task"> | string | null
+  priority?: Prisma.StringFilter<"Task"> | string
+  status?: Prisma.StringFilter<"Task"> | string
   published?: Prisma.BoolFilter<"Task"> | boolean
   authorId?: Prisma.IntFilter<"Task"> | number
   author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -247,7 +267,9 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
 export type TaskOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  content?: Prisma.SortOrderInput | Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
+  priority?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   published?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
   _count?: Prisma.TaskCountOrderByAggregateInput
@@ -263,14 +285,18 @@ export type TaskScalarWhereWithAggregatesInput = {
   NOT?: Prisma.TaskScalarWhereWithAggregatesInput | Prisma.TaskScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Task"> | number
   title?: Prisma.StringWithAggregatesFilter<"Task"> | string
-  content?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
+  description?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
+  priority?: Prisma.StringWithAggregatesFilter<"Task"> | string
+  status?: Prisma.StringWithAggregatesFilter<"Task"> | string
   published?: Prisma.BoolWithAggregatesFilter<"Task"> | boolean
   authorId?: Prisma.IntWithAggregatesFilter<"Task"> | number
 }
 
 export type TaskCreateInput = {
   title: string
-  content?: string | null
+  description?: string | null
+  priority?: string
+  status?: string
   published?: boolean
   author: Prisma.UserCreateNestedOneWithoutTasksInput
 }
@@ -278,14 +304,18 @@ export type TaskCreateInput = {
 export type TaskUncheckedCreateInput = {
   id?: number
   title: string
-  content?: string | null
+  description?: string | null
+  priority?: string
+  status?: string
   published?: boolean
   authorId: number
 }
 
 export type TaskUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   author?: Prisma.UserUpdateOneRequiredWithoutTasksNestedInput
 }
@@ -293,7 +323,9 @@ export type TaskUpdateInput = {
 export type TaskUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -301,21 +333,27 @@ export type TaskUncheckedUpdateInput = {
 export type TaskCreateManyInput = {
   id?: number
   title: string
-  content?: string | null
+  description?: string | null
+  priority?: string
+  status?: string
   published?: boolean
   authorId: number
 }
 
 export type TaskUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type TaskUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   authorId?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -333,7 +371,9 @@ export type TaskOrderByRelationAggregateInput = {
 export type TaskCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  content?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  priority?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   published?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
 }
@@ -346,7 +386,9 @@ export type TaskAvgOrderByAggregateInput = {
 export type TaskMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  content?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  priority?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   published?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
 }
@@ -354,7 +396,9 @@ export type TaskMaxOrderByAggregateInput = {
 export type TaskMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
-  content?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  priority?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   published?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
 }
@@ -412,14 +456,18 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type TaskCreateWithoutAuthorInput = {
   title: string
-  content?: string | null
+  description?: string | null
+  priority?: string
+  status?: string
   published?: boolean
 }
 
 export type TaskUncheckedCreateWithoutAuthorInput = {
   id?: number
   title: string
-  content?: string | null
+  description?: string | null
+  priority?: string
+  status?: string
   published?: boolean
 }
 
@@ -455,7 +503,9 @@ export type TaskScalarWhereInput = {
   NOT?: Prisma.TaskScalarWhereInput | Prisma.TaskScalarWhereInput[]
   id?: Prisma.IntFilter<"Task"> | number
   title?: Prisma.StringFilter<"Task"> | string
-  content?: Prisma.StringNullableFilter<"Task"> | string | null
+  description?: Prisma.StringNullableFilter<"Task"> | string | null
+  priority?: Prisma.StringFilter<"Task"> | string
+  status?: Prisma.StringFilter<"Task"> | string
   published?: Prisma.BoolFilter<"Task"> | boolean
   authorId?: Prisma.IntFilter<"Task"> | number
 }
@@ -463,27 +513,35 @@ export type TaskScalarWhereInput = {
 export type TaskCreateManyAuthorInput = {
   id?: number
   title: string
-  content?: string | null
+  description?: string | null
+  priority?: string
+  status?: string
   published?: boolean
 }
 
 export type TaskUpdateWithoutAuthorInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type TaskUncheckedUpdateWithoutAuthorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type TaskUncheckedUpdateManyWithoutAuthorInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -492,7 +550,9 @@ export type TaskUncheckedUpdateManyWithoutAuthorInput = {
 export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
-  content?: boolean
+  description?: boolean
+  priority?: boolean
+  status?: boolean
   published?: boolean
   authorId?: boolean
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -501,7 +561,9 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
-  content?: boolean
+  description?: boolean
+  priority?: boolean
+  status?: boolean
   published?: boolean
   authorId?: boolean
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -510,7 +572,9 @@ export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
-  content?: boolean
+  description?: boolean
+  priority?: boolean
+  status?: boolean
   published?: boolean
   authorId?: boolean
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -519,12 +583,14 @@ export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type TaskSelectScalar = {
   id?: boolean
   title?: boolean
-  content?: boolean
+  description?: boolean
+  priority?: boolean
+  status?: boolean
   published?: boolean
   authorId?: boolean
 }
 
-export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "content" | "published" | "authorId", ExtArgs["result"]["task"]>
+export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "priority" | "status" | "published" | "authorId", ExtArgs["result"]["task"]>
 export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -543,7 +609,9 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     title: string
-    content: string | null
+    description: string | null
+    priority: string
+    status: string
     published: boolean
     authorId: number
   }, ExtArgs["result"]["task"]>
@@ -972,7 +1040,9 @@ export interface Prisma__TaskClient<T, Null = never, ExtArgs extends runtime.Typ
 export interface TaskFieldRefs {
   readonly id: Prisma.FieldRef<"Task", 'Int'>
   readonly title: Prisma.FieldRef<"Task", 'String'>
-  readonly content: Prisma.FieldRef<"Task", 'String'>
+  readonly description: Prisma.FieldRef<"Task", 'String'>
+  readonly priority: Prisma.FieldRef<"Task", 'String'>
+  readonly status: Prisma.FieldRef<"Task", 'String'>
   readonly published: Prisma.FieldRef<"Task", 'Boolean'>
   readonly authorId: Prisma.FieldRef<"Task", 'Int'>
 }

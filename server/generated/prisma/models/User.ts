@@ -279,7 +279,7 @@ export type UserScalarWhereWithAggregatesInput = {
 export type UserCreateInput = {
   email: string
   name?: string | null
-  password: string
+  password?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   tasks?: Prisma.TaskCreateNestedManyWithoutAuthorInput
@@ -289,7 +289,7 @@ export type UserUncheckedCreateInput = {
   id?: number
   email: string
   name?: string | null
-  password: string
+  password?: string
   createdAt?: Date | string
   updatedAt?: Date | string
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutAuthorInput
@@ -318,7 +318,7 @@ export type UserCreateManyInput = {
   id?: number
   email: string
   name?: string | null
-  password: string
+  password?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -417,7 +417,7 @@ export type UserUpdateOneRequiredWithoutTasksNestedInput = {
 export type UserCreateWithoutTasksInput = {
   email: string
   name?: string | null
-  password: string
+  password?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -426,7 +426,7 @@ export type UserUncheckedCreateWithoutTasksInput = {
   id?: number
   email: string
   name?: string | null
-  password: string
+  password?: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }

@@ -9,15 +9,19 @@ import { CirclePlus, Diamond } from "lucide-react";
 type TaskType = {
   id: string;
   title: string;
+  description: string;
+  priority: "low" | "medium" | "high";
 };
 
 type Props = {
   tasks: TaskType[];
   columnId: string;
   onAddClick: () => void;
+  onEdit: (task: TaskType) => void;
+  onDelete: (id: string) => void;
 };
 
-const ReviewTasks = ({ tasks, columnId, onAddClick }: Props) => {
+const ReviewTasks = ({ tasks, columnId, onAddClick, onEdit, onDelete }: Props) => {
   const { setNodeRef } = useDroppable({
     id: columnId,
     data: { columnId },
@@ -46,8 +50,10 @@ const ReviewTasks = ({ tasks, columnId, onAddClick }: Props) => {
             id={task.id}
             title={task.title}
             columnId={columnId}
-            priority={"low"}
-            description={"Test"}
+            priority={task.priority}
+            description={task.description}
+            onEdit={() => onEdit(task)}
+            onDelete={() => onDelete(task.id)}
           />
         ))}
       </SortableContext>

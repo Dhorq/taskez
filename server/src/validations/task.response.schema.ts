@@ -3,7 +3,9 @@ import { z } from "zod";
 export const taskResponseSchema = z.object({
   id: z.number().int(),
   title: z.string(),
-  content: z.string().nullable(),
+  description: z.string().nullable(),
+  priority: z.string(),
+  status: z.string(),
   published: z.boolean(),
   authorId: z.number().int(),
 });

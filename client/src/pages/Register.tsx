@@ -1,92 +1,148 @@
-import { UserPen } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../lib/axios";
+import { useAuth } from "../contexts/AuthContext";
+import AuthLayout from "../components/AuthLayout";
+import SocialButtons from "../components/SocialButtons";
 
 const Register = () => {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [keepUpdated, setKeepUpdated] = useState(false);
+
   const navigate = useNavigate();
+  const { checkAuth } = useAuth();
 
-  const handleLogin = () => {
-    navigate("/login");
-  };
-
-  const handleRegister = () => {
-    navigate("/login");
-  };
-
-  const handleRegisterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
 
-    const button = (e.nativeEvent as SubmitEvent)
-      .submitter as HTMLButtonElement;
+    setError("");
+    setLoading(true);
 
-    const action = button.value;
-
-    if (action === "login") handleLogin();
-    else handleRegister();
+    try {
+      const res = await api.post("/auth/register", { email, name, password });
+      if (res.data.success) {
+        await checkAuth();
+        navigate("/");
+      }
+    } catch (err: unknown) {
+      const msg =
+        (err as any).response?.data?.message ??
+        (err as any).response?.data?.errors?.email?.[0] ??
+        "Registration failed. Please try again.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
-  return (
-    <div className="bg-linear-to-r from-gray-500 to-gray-100 flex min-h-screen justify-center items-center w-full">
-      <form
-        onSubmit={handleRegisterSubmit}
-        className="h-125 w-100 rounded-3xl flex flex-col justify-evenly items-center gap-3 p-5 bg-transparent shadow-2xl border-gray-300 border"
-      >
-        <UserPen className="bg-gray-100 size-12 rounded-lg p-2 shadow-md" />
-        <h1 className="text-2xl font-bold text-center">
-          Sign up for your account
-        </h1>
-        <p className="text-gray-500">Manage your task. For free.</p>
-        <input
-          type="email"
-          placeholder="Email"
-          className="bg-gray-100/80 rounded-xl w-75 h-8 p-2 shadow-sm focus:shadow-md text-xs text-gray-500 outline-none"
-        />
-        <input
-          type="text"
-          placeholder="Name"
-          className="bg-gray-100/80 rounded-xl w-75 h-8 p-2 shadow-sm focus:shadow-md text-xs text-gray-500 outline-none"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="bg-gray-100/80 rounded-xl w-75 h-8 p-2 shadow-sm focus:shadow-md text-xs text-gray-500 outline-none"
-        />
-        <a
-          href=""
-          className="text-gray-700 relative left-25 text-xs hover:opacity-50 transition-all duration-200"
-        >
-          Forgot password?
-        </a>
-        <button
-          name="action"
-          value="register"
-          type="submit"
-          className="w-75 h-12 bg-black/80 hover:bg-black/25 rounded-xl text-white transition-all duration-200 hover:cursor-pointer hover:shadow-md"
-        >
-          Register
-        </button>
-        <button
-          name="action"
-          value="register"
-          type="submit"
-          className="w-75 h-12 rounded-xl border border-gray-500 text-white hover:cursor-pointer  hover:bg-gray-500"
-        >
-          Login
-        </button>
 
-        <p className="text-xs text-gray-500">Or sign up with</p>
-        <div className="flex gap-5 justify-between">
-          <div className="flex justify-center items-center text-center p-2 h-8 w-22 rounded-xl bg-white shadow-sm">
-            A
+  return (
+    <AuthLayout
+      type="signup"
+      onToggle={() => navigate("/login")}
+      title=""
+      footerText="Already have an account?"
+      footerLinkText="Login"
+      onFooterLinkClick={() => navigate("/login")}
+    >
+      <div className="flex flex-col gap-5">
+
+        <form onSubmit={handleRegister} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-gray-700 ml-1">
+              Email address
+            </label>
+            <input
+              type="email"
+              placeholder="Enter your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-100 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm placeholder:text-gray-300"
+            />
           </div>
-          <div className="flex justify-center items-center text-center p-2 h-8 w-22 rounded-xl bg-white shadow-sm">
-            A
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-gray-700 ml-1">
+              Name
+            </label>
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-100 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm placeholder:text-gray-300"
+            />
           </div>
-          <div className="flex justify-center items-center text-center p-2 h-8 w-22 rounded-xl bg-white shadow-sm">
-            A
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-semibold text-gray-700 ml-1">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-100 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all text-sm placeholder:text-gray-300 pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
           </div>
-        </div>
-      </form>
-    </div>
+
+          {error && (
+            <p className="text-xs text-red-500 bg-red-50 p-2 rounded-lg border border-red-100 text-center">
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3.5 rounded-xl bg-gray-900 text-white font-semibold text-sm shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:bg-gray-800 transition-all flex items-center justify-center gap-2 group disabled:opacity-70"
+          >
+            {loading ? "Creating..." : "Create an account"}
+          </button>
+
+        <SocialButtons />
+
+
+          {/* <div className="flex gap-3 px-1 mt-1">
+            <div className="pt-0.5">
+              <input
+                type="checkbox"
+                id="keepUpdated"
+                checked={keepUpdated}
+                onChange={(e) => setKeepUpdated(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer"
+              />
+            </div>
+            <label htmlFor="keepUpdated" className="text-[11px] text-gray-500 leading-normal cursor-pointer">
+              Please keep me updated by email with the latest news, research findings, reward programs, event updates.
+            </label>
+          </div> */}
+        </form>
+      </div>
+    </AuthLayout>
   );
 };
 
 export default Register;
+

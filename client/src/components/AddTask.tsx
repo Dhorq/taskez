@@ -3,7 +3,7 @@ import { useState } from "react";
 type Props = {
   open: boolean;
   onClose: () => void;
-  onAdd: (title: string) => void;
+  onAdd: (title: string, description: string, priority: "low" | "medium" | "high") => void;
 };
 
 const AddTask = ({ open, onClose, onAdd }: Props) => {
@@ -16,8 +16,10 @@ const AddTask = ({ open, onClose, onAdd }: Props) => {
   const handleSubmit = () => {
     if (!title.trim()) return;
 
-    onAdd(title);
+    onAdd(title, description, priority as "low" | "medium" | "high");
     setTitle("");
+    setDescription("");
+    setPriority("low");
     onClose();
   };
 

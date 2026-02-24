@@ -11,6 +11,7 @@ import {
 import { userResponseSchema } from "../validations/user.response.schema";
 import logger from "./../config/logger";
 import { loginSchema } from "../validations/login.schema";
+import { prisma } from "../../lib/prisma";
 
 interface RegisterBody {
   email: string;
@@ -137,6 +138,33 @@ export async function login(
       message: "Successfully logged in",
       data: response,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function me(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: { id: true, email: true, name: true },
+    });
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.json({ success: true, data: user });
   } catch (error) {
     next(error);
   }

@@ -12,7 +12,9 @@ import logger from "../config/logger";
 
 interface createTaskBody {
   title: string;
-  content: string;
+  description?: string;
+  priority?: string;
+  status?: string;
 }
 
 type Params = {
@@ -20,8 +22,10 @@ type Params = {
 };
 
 interface updateTaskBody {
-  title: string;
-  content: string;
+  title?: string;
+  description?: string;
+  priority?: string;
+  status?: string;
 }
 
 export async function getTasks(
@@ -111,7 +115,8 @@ export async function createTask(
       ip: req.ip,
     });
 
-    const { title, content } = createTaskSchema.parse(req.body);
+    const { title, description, priority, status, published } =
+      createTaskSchema.parse(req.body);
 
     if (!req.user) {
       res.status(401).json({ message: "Unauthorized" });
@@ -121,13 +126,12 @@ export async function createTask(
     const userId = req.user.id;
 
     const newTask = await prisma.task.create({
-      data: { authorId: userId, title, content },
+      data: { authorId: userId, title, description, priority, status, published },
     });
 
-    logger.info("Task updated successfully", {
-      userId: newTask.id,
+    logger.info("Task created successfully", {
+      taskId: newTask.id,
       title: newTask.title,
-      content: newTask.content,
     });
 
     const response = taskResponseSchema.parse(newTask);
@@ -153,7 +157,8 @@ export async function updateTask(
       ip: req.ip,
     });
 
-    const { title, content } = updateTaskSchema.parse(req.body);
+    const { title, description, priority, status, published } =
+      updateTaskSchema.parse(req.body);
 
     if (!req.user) {
       res.status(401).json({ message: "Unauthorized" });
@@ -180,7 +185,7 @@ export async function updateTask(
 
     const updatedTask = await prisma.task.update({
       where: { id },
-      data: { authorId: userId, title, content },
+      data: { title, description, priority, status, published },
     });
 
     logger.info("Task updated successfully", {

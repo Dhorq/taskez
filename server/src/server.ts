@@ -9,13 +9,19 @@ import taskRoutes from "./routes/task.routes.js";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 
+dotenv.config();
+
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(helmet());
-app.use(cors());
-dotenv.config();
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+  }),
+);
 
 const PORT = process.env.PORT || 3000;
 

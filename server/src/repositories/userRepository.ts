@@ -1,7 +1,6 @@
 import { prisma } from "../../lib/prisma";
 
 async function main() {
-  // Create a new user with a post
   const user = await prisma.user.create({
     data: {
       name: "Alice",
@@ -20,7 +19,6 @@ async function main() {
   });
   console.log("Created user:", user);
 
-  // Fetch all users with their tasks
   const allUsers = await prisma.user.findMany({
     include: {
       tasks: true,

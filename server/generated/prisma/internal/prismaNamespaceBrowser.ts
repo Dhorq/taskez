@@ -86,7 +86,9 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 export const TaskScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  content: 'content',
+  description: 'description',
+  priority: 'priority',
+  status: 'status',
   published: 'published',
   authorId: 'authorId'
 } as const

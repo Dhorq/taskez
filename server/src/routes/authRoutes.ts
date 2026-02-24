@@ -1,5 +1,5 @@
 import express from "express";
-import { login, logout, register } from "../controllers/authControllers.js";
+import { login, logout, me, register } from "../controllers/authControllers.js";
 import { errorHandler } from "../middlewares/errorHandler.js";
 import { authMiddleware } from "../utils/jwt.js";
 
@@ -9,6 +9,7 @@ router.post("/register", register, errorHandler);
 router.post("/login", login, errorHandler);
 router.post("/refresh-token", logout, errorHandler);
 
+router.get("/me", authMiddleware, me, errorHandler);
 router.post("/logout", authMiddleware, logout, errorHandler);
 
 export default router;

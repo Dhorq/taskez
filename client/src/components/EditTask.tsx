@@ -1,127 +1,97 @@
-import { useEffect, useState } from "react";
-
-type Task = {
-  id: string;
-  title: string;
-  description: string;
-  priority: "low" | "medium" | "high";
-};
+import { useState } from "react";
+import Modal from "./ui/Modal";
+import TaskFormFields from "./TaskFormFields";
+import type { Task as TaskType } from "../types/task";
+import type { TaskFormValues } from "./formConstants";
 
 type Props = {
   open: boolean;
-  task: Task | null;
+  task: TaskType | null;
+  loading: boolean;
   onClose: () => void;
-  onSave: (id: string, title: string, description: string, priority: "low" | "medium" | "high") => void;
+  onSave: (values: TaskFormValues) => Promise<boolean>;
 };
 
-const EditTask = ({ open, task, onClose, onSave }: Props) => {
-  const [title, setTitle] = useState(task?.title ?? "");
-  const [description, setDescription] = useState(task?.description ?? "");
-  const [priority, setPriority] = useState<"low" | "medium" | "high">(
-    task?.priority ?? "low",
-  );
-
-  useEffect(() => {
-    if (task) {
-      setTitle(task.title);
-      setDescription(task.description);
-      setPriority(task.priority);
-    }
-  }, [task]);
-
+export default function EditTask({ open, task, loading, onClose, onSave }: Props) {
   if (!open || !task) return null;
 
+  return (
+    <Modal
+      open={open}
+      onClose={loading ? () => {} : onClose}
+      title="Edit task"
+      description="Update the task details or move it between stages."
+      footer={
+        <>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={loading}
+            className="rounded-lg border border-line bg-surface px-3.5 py-2 text-sm font-medium text-ink-secondary hover:bg-canvas transition-colors disabled:opacity-60"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            form="edit-task-form"
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-white hover:bg-primary-hover transition-colors disabled:opacity-60"
+          >
+            {loading && (
+              <span className="size-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+            )}
+            Save changes
+          </button>
+        </>
+      }
+    >
+      <EditTaskForm key={task.id} task={task} loading={loading} onSave={onSave} />
+    </Modal>
+  );
+}
+
+function EditTaskForm({
+  task,
+  onSave,
+}: {
+  task: TaskType;
+  loading: boolean;
+  onSave: (values: TaskFormValues) => Promise<boolean>;
+}) {
+  const [values, setValues] = useState<TaskFormValues>({
+    title: task.title,
+    description: task.description,
+    priority: task.priority,
+    status: task.status,
+  });
+  const [error, setError] = useState<string | null>(null);
+
+  const set = <K extends keyof TaskFormValues>(key: K, v: TaskFormValues[K]) =>
+    setValues((prev) => ({ ...prev, [key]: v }));
+
   const handleSave = () => {
-    if (!title.trim()) return;
-    onSave(task.id, title, description, priority);
-    onClose();
+    if (!values.title.trim()) {
+      setError("Please enter a title.");
+      return;
+    }
+    void onSave(values);
   };
 
   return (
-    <>
-      <div
-        onClick={onClose}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+    <form id="edit-task-form" onSubmit={handleSave}>
+      <TaskFormFields
+        values={values}
+        error={error}
+        priorityNamePrefix="edit"
+        showStatus
+        onTitleChange={(v) => {
+          set("title", v);
+          if (error && v.trim()) setError(null);
+        }}
+        onDescriptionChange={(v) => set("description", v)}
+        onPriorityChange={(v) => set("priority", v)}
+        onStatusChange={(v) => set("status", v)}
       />
-
-      <div className="fixed inset-0 flex items-center justify-center z-50">
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="
-            bg-white w-96 rounded-2xl shadow-2xl p-6
-            flex flex-col gap-4
-            animate-in fade-in zoom-in-95 text-black
-          "
-        >
-          <h2 className="text-xl font-bold">Edit Task</h2>
-
-          <div className="flex gap-6 items-center">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="edit-priority"
-                value="low"
-                checked={priority === "low"}
-                onChange={(e) => setPriority(e.target.value as "low" | "medium" | "high")}
-              />
-              Low
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="edit-priority"
-                value="medium"
-                checked={priority === "medium"}
-                onChange={(e) => setPriority(e.target.value as "low" | "medium" | "high")}
-              />
-              Medium
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="edit-priority"
-                value="high"
-                checked={priority === "high"}
-                onChange={(e) => setPriority(e.target.value as "low" | "medium" | "high")}
-              />
-              High
-            </label>
-          </div>
-
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title"
-            className="border rounded-lg p-2 outline-none focus:ring-2 focus:ring-black"
-          />
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description"
-            className="border rounded-lg p-2 outline-none focus:ring-2 focus:ring-black h-32 resize-none"
-          />
-
-          <div className="flex justify-end gap-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-gray-200 cursor-pointer hover:bg-red-500"
-            >
-              Cancel
-            </button>
-
-            <button
-              onClick={handleSave}
-              className="px-4 py-2 rounded-lg bg-black text-white cursor-pointer hover:bg-blue-500"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+    </form>
   );
-};
-
-export default EditTask;
+}

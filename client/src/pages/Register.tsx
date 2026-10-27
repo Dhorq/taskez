@@ -4,6 +4,7 @@ import api from "../lib/axios";
 import { useAuth } from "../contexts/AuthContext";
 import AuthLayout from "../components/AuthLayout";
 import SocialButtons from "../components/SocialButtons";
+import { getErrorMessage } from "../components/formConstants";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,6 @@ const Register = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [keepUpdated, setKeepUpdated] = useState(false);
 
   const navigate = useNavigate();
   const { checkAuth } = useAuth();
@@ -34,11 +34,13 @@ const Register = () => {
         navigate("/");
       }
     } catch (err: unknown) {
-      const msg =
-        (err as any).response?.data?.message ??
-        (err as any).response?.data?.errors?.email?.[0] ??
-        "Registration failed. Please try again.";
-      setError(msg);
+      setError(
+        getErrorMessage(
+          err,
+          "Registration failed. Please try again.",
+          "email",
+        ),
+      );
     } finally {
       setLoading(false);
     }

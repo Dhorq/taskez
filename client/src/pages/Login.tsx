@@ -4,6 +4,7 @@ import api from "../lib/axios";
 import { useAuth } from "../contexts/AuthContext";
 import AuthLayout from "../components/AuthLayout";
 import SocialButtons from "../components/SocialButtons";
+import { getErrorMessage } from "../components/formConstants";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -32,9 +33,7 @@ const Login = () => {
         navigate("/");
       }
     } catch (err: unknown) {
-      const msg =
-        (err as any).response?.data?.message ?? "Login failed. Please try again.";
-      setError(msg);
+      setError(getErrorMessage(err, "Login failed. Please try again."));
     } finally {
       setLoading(false);
     }

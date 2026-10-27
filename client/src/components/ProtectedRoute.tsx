@@ -7,8 +7,14 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-canvas">
+        <span
+          role="status"
+          aria-label="Loading"
+          className="flex size-8 items-center justify-center"
+        >
+          <span className="size-8 border-2 border-primary/25 border-t-primary rounded-full animate-spin" />
+        </span>
       </div>
     );
   }

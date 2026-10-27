@@ -1,18 +1,16 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, GripVertical } from "lucide-react";
+import type { Task as TaskData } from "../types/task";
+import { PriorityBadge } from "./ui/Badges";
 
 type Props = {
-  id: string;
-  title: string;
-  description: string;
-  priority: "low" | "medium" | "high";
-  columnId: string;
-  onEdit: () => void;
-  onDelete: () => void;
+  task: TaskData;
+  onEdit: (task: TaskData) => void;
+  onDelete: (task: TaskData) => void;
 };
 
-const Task = ({ id, title, description, priority, columnId, onEdit, onDelete }: Props) => {
+const Task = ({ task, onEdit, onDelete }: Props) => {
   const {
     setNodeRef,
     attributes,
@@ -20,21 +18,17 @@ const Task = ({ id, title, description, priority, columnId, onEdit, onDelete }: 
     transform,
     transition,
     isDragging,
+    isOver,
   } = useSortable({
-    id,
-    data: { columnId },
+    id: task.id,
+    data: { columnId: task.status },
   });
+
+  const completed = task.status === "completed";
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition ?? "transform 150ms ease",
-    opacity: isDragging ? 0.25 : 1,
-  };
-
-  const priorityColor = {
-    low: "bg-green-500/20 text-green-400 border-green-400/30",
-    medium: "bg-yellow-500/20 text-yellow-400 border-yellow-400/30",
-    high: "bg-red-500/20 text-red-400 border-red-400/30",
   };
 
   return (
@@ -43,38 +37,47 @@ const Task = ({ id, title, description, priority, columnId, onEdit, onDelete }: 
       style={style}
       {...attributes}
       {...listeners}
-      className="
-        w-full min-h-28 shrink-0
-        bg-white/10 backdrop-blur-md
-        border border-white/10
-        rounded-xl p-4
-        cursor-grab active:cursor-grabbing
-        select-none
-        shadow-md hover:shadow-xl
-        hover:-translate-y-0.5
-        transition-all duration-300
-        flex flex-col gap-2
-        group
-      "
+      role="button"
+      aria-label={`Task: ${task.title}. Open editor`}
+      onClick={() => onEdit(task)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          onEdit(task);
+        }
+      }}
+      className={`
+        group relative w-full shrink-0 cursor-grab select-none rounded-xl border
+        bg-surface p-3.5 pl-9 shadow-card text-left
+        transition-shadow duration-200 hover:shadow-lift
+        active:cursor-grabbing
+        ${isDragging ? "opacity-40 border-primary/30" : ""}
+        ${isOver ? "ring-2 ring-primary/40" : ""}
+        border-line
+      `}
     >
-      <div className="flex justify-between items-center">
-        <span
-          className={`
-            text-xs font-semibold px-2 py-1 rounded-md border
-            ${priorityColor[priority]}
-          `}
-        >
-          {priority.toUpperCase()}
-        </span>
+      {/* Drag handle zone (whole card carries listeners; handle is the visual affordance) */}
+      <span
+        aria-hidden="true"
+        className="absolute left-2 top-3.5 text-ink-muted/50 group-hover:text-ink-muted transition-colors"
+      >
+        <GripVertical className="size-4" />
+      </span>
 
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      <div className="mb-1.5 flex items-center justify-between gap-2">
+        <PriorityBadge priority={task.priority} />
+        <div
+          className="flex gap-0.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-150"
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();
-              onEdit();
+              onEdit(task);
             }}
-            className="p-1.5 rounded-md bg-white/10 hover:bg-blue-500/30 text-gray-300 hover:text-blue-300 transition-colors"
+            aria-label={`Edit task ${task.title}`}
+            className="rounded-md p-1.5 text-ink-muted hover:bg-canvas hover:text-ink transition-colors"
           >
             <Pencil className="size-3.5" />
           </button>
@@ -82,22 +85,52 @@ const Task = ({ id, title, description, priority, columnId, onEdit, onDelete }: 
             onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();
-              onDelete();
+              onDelete(task);
             }}
-            className="p-1.5 rounded-md bg-white/10 hover:bg-red-500/30 text-gray-300 hover:text-red-400 transition-colors"
+            aria-label={`Delete task ${task.title}`}
+            className="rounded-md p-1.5 text-ink-muted hover:bg-danger-soft hover:text-danger transition-colors"
           >
-            <Trash2 className="size-3.5" />
+            <TrashIcon />
           </button>
         </div>
       </div>
 
-      <h3 className="font-semibold text-white text-md leading-snug">{title}</h3>
+      <h3
+        className={`text-sm font-medium leading-snug break-words ${
+          completed ? "text-ink-muted line-through" : "text-ink"
+        }`}
+      >
+        {task.title}
+      </h3>
 
-      {description && (
-        <p className="text-xs text-gray-300 line-clamp-3">{description}</p>
+      {task.description && (
+        <p
+          className={`mt-1 text-xs leading-relaxed line-clamp-2 ${
+            completed ? "text-ink-muted/70" : "text-ink-secondary"
+          }`}
+        >
+          {task.description}
+        </p>
       )}
     </div>
   );
 };
+
+function TrashIcon() {
+  return (
+    <svg
+      className="size-3.5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+    </svg>
+  );
+}
 
 export default Task;
